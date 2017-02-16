@@ -43,7 +43,7 @@ public class wybrenTest extends AdvancedRobot{
 
     public void onHitByBullet(HitByBulletEvent e) {
 
-        while (getX() != 1 && getX() != 799 && getY() != 0 && getY() != 599{
+        while (getX() != 1 && getX() != 799 && getY() != 0 && getY() != 599){
             ahead(1);
         }
 
