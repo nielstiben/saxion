@@ -13,41 +13,38 @@ import static robocode.util.Utils.normalRelativeAngleDegrees;
 /**
  * Created by wybrenoppedijk on 16/02/2017.
  */
-public class wybrenTest extends AdvancedRobot{
-    int dist = 50;
+public class WybrenTest extends AdvancedRobot{
+    int turnDirection = 1;
+    int dist = 10;
 
     public void run(){
 
-        while (true) {
-            setBodyColor(Color.blue);
-            turnGunRight(5);
+        while(true) {
+            this.turnRight(10);
         }
     }
 
     public void onScannedRobot(ScannedRobotEvent e) {
-        if (e.getDistance() <40 && this.getEnergy() > 40) {
+
+        this.turnRight(e.getBearing());
+        this.ahead(e.getDistance() -150);
+        if (e.getDistance() < 80) {
             fire(3);
-        }else if (e.getDistance() < 50 && this.getEnergy() > 35) {
-            fire(2);
-        } else {
+        }else {
             fire(1);
         }
-    }
-
-    public void onHitRobot(HitRobotEvent e) {
-        double turnGunAmt = normalRelativeAngleDegrees(e.getBearing() + getHeading() - getGunHeading());
-
-        turnGunRight(turnGunAmt);
-        fire(3);
-    }
-
-    public void onHitByBullet(HitByBulletEvent e) {
-
-        while (getX() != 1 && getX() != 799 && getY() != 0 && getY() != 599){
-            ahead(1);
-        }
-
         scan();
     }
+
+
+
+
+//    public void onHitByBullet(HitByBulletEvent e) {
+//
+//            turnRight(normalRelativeAngleDegrees(90 - (getHeading() - e.getHeading())));
+//            ahead(dist);
+//            dist *= -1;
+//        scan();
+//    }
 
 }
