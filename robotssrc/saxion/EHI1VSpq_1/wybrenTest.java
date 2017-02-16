@@ -13,7 +13,9 @@ import static robocode.util.Utils.normalRelativeAngleDegrees;
 /**
  * Created by wybrenoppedijk on 16/02/2017.
  */
-public class wybrenTest extends AdvancedRobot{
+public class WybrenTest extends AdvancedRobot{
+    int turnDirection = 1;
+    int dist = 10;
 
     public void run(){
 
@@ -25,12 +27,10 @@ public class wybrenTest extends AdvancedRobot{
     public void onScannedRobot(ScannedRobotEvent e) {
 
         this.turnRight(e.getBearing());
-        this.ahead(e.getDistance() -110);
+        this.ahead(e.getDistance() -150);
         if (e.getDistance() < 80) {
             fire(3);
-        }else if (e.getDistance() <100) {
-            fire(2);
-        } else {
+        }else {
             fire(1);
         }
         scan();
