@@ -4,8 +4,7 @@ import robocode.*;
 import robocode.util.Utils;
 import sampleteam.RobotColors;
 
-public class QuickDroid extends TeamRobot implements robocode.Droid {
-    boolean movingForward;
+public class MocroBot extends TeamRobot implements robocode.Droid {
 
     public void run() {
         out.println("MyFirstDroid ready.");
@@ -16,18 +15,36 @@ public class QuickDroid extends TeamRobot implements robocode.Droid {
 
 
         if (event.getMessage() instanceof Position) {
+            double bulletPower = Math.min(3.0, getEnergy());
             Position position = (Position) event.getMessage();
             double theta = Utils.normalAbsoluteAngle(Math.atan2(
                     position.getX() - getX(), position.getY() - getY()));
-            goTo(position.getX(), position.getY());
+            //goTo(position.getX(), position.getY());
             setTurnGunRightRadians(Utils.normalRelativeAngle(theta - getGunHeadingRadians()));
+            fire(bulletPower);
         } else if (event.getMessage() instanceof RobotColors) {
             RobotColors colors = (RobotColors) event.getMessage();
             this.setColors(colors.bodyColor, colors.gunColor, colors.radarColor, colors.bulletColor, colors.scanColor);
-            fire(3);
             scan();
         }
     }
+
+//    @Override
+//    public void onHitByBullet(HitByBulletEvent event) {
+//        double x = getX();
+//        double y = getY();
+//
+//        System.out.println("test");
+//
+//        if (x > 100 ) {
+//            if (y > 100 ) {
+//                goTo(x-100, y-100);
+//            }
+//        }
+//
+//
+//
+//    }
 
     private void goTo(double x, double y) {
 /* Transform our coordinates into a vector */
@@ -51,9 +68,9 @@ public class QuickDroid extends TeamRobot implements robocode.Droid {
         double turnAngle = Math.atan(Math.tan(targetAngle));
         setTurnRightRadians(turnAngle);
         if (targetAngle == turnAngle) {
-            setAhead(distance - 300);
+            setAhead(distance - 100);
         } else {
-            setBack(distance - 300);
+            setBack(distance - 100);
         }
     }
 
