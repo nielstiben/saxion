@@ -1,9 +1,8 @@
 package saxion.EHI1VSpq_1;
 
 import robocode.*;
+import robocode.util.Utils;
 import sampleteam.RobotColors;
-
-import static robocode.util.Utils.normalRelativeAngleDegrees;
 
 public class QuickDroid extends TeamRobot implements robocode.Droid {
 
@@ -15,16 +14,14 @@ public class QuickDroid extends TeamRobot implements robocode.Droid {
 
         if(event.getMessage() instanceof Position) {
             Position position = (Position) event.getMessage();
+            double theta = Utils.normalAbsoluteAngle(Math.atan2(
+                    position.getX() - getX(), position.getY() - getY()));
 
-            double dx = position.getX() - this.getX();
-            double dy = position.getY() - this.getY();
-            double angle = Math.toDegrees(Math.atan2(dx, dy));
-
-            turnGunRight(normalRelativeAngleDegrees(angle - getGunHeading()));
-            fire(3);
+            setTurnGunRightRadians(Utils.normalRelativeAngle(theta - getGunHeadingRadians()));
         } else if(event.getMessage() instanceof RobotColors) {
             RobotColors colors = (RobotColors) event.getMessage();
             this.setColors(colors.bodyColor, colors.gunColor, colors.radarColor, colors.bulletColor, colors.scanColor);
+            fire(3);
         }
     }
 

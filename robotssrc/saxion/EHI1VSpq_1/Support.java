@@ -2,9 +2,11 @@ package saxion.EHI1VSpq_1;
 
 import robocode.ScannedRobotEvent;
 import robocode.TeamRobot;
+import robocode.util.Utils;
 import sampleteam.*;
 
 import java.awt.*;
+import java.awt.geom.Point2D;
 import java.io.IOException;
 import java.util.HashMap;
 
@@ -82,6 +84,52 @@ public class Support extends TeamRobot {
     }
 
     public void onScannedRobot(ScannedRobotEvent event) {
+
+        if(isTeammate(event.getName())) return;
+
+        double bulletPower = Math.min(3.0,getEnergy());
+        double myX = getX();
+        double myY = getY();
+        double absoluteBearing = getHeadingRadians() + event.getBearingRadians();
+        double enemyX = getX() + event.getDistance() * Math.sin(absoluteBearing);
+        double enemyY = getY() + event.getDistance() * Math.cos(absoluteBearing);
+        double enemyHeading = event.getHeadingRadians();
+        double enemyVelocity = event.getVelocity();
+
+
+        double deltaTime = 0;
+        double battleFieldHeight = getBattleFieldHeight(),
+                battleFieldWidth = getBattleFieldWidth();
+        double predictedX = enemyX, predictedY = enemyY;
+        while((++deltaTime) * (20.0 - 3.0 * bulletPower) <
+                Point2D.Double.distance(myX, myY, predictedX, predictedY)){
+            predictedX += Math.sin(enemyHeading) * enemyVelocity;
+            predictedY += Math.cos(enemyHeading) * enemyVelocity;
+            if(	predictedX < 18.0
+                    || predictedY < 18.0
+                    || predictedX > battleFieldWidth - 18.0
+                    || predictedY > battleFieldHeight - 18.0){
+                predictedX = Math.min(Math.max(18.0, predictedX),
+                        battleFieldWidth - 18.0);
+                predictedY = Math.min(Math.max(18.0, predictedY),
+                        battleFieldHeight - 18.0);
+                break;
+            }
+        }
+        double theta = Utils.normalAbsoluteAngle(Math.atan2(
+                predictedX - getX(), predictedY - getY()));
+
+        setTurnRadarRightRadians(
+                Utils.normalRelativeAngle(absoluteBearing - getRadarHeadingRadians()));
+        setTurnGunRightRadians(Utils.normalRelativeAngle(theta - getGunHeadingRadians()));
+        fire(bulletPower);
+
+        try {
+            broadcastMessage(new Position(predictedX, predictedY));
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+
 
         double enemyBearing = this.getHeading() + event.getBearing(), positionX = getX() + event.getDistance() * Math.sin(Math.toRadians(enemyBearing)), positionY = getY() + event.getDistance() * Math.cos(Math.toRadians(enemyBearing));
 

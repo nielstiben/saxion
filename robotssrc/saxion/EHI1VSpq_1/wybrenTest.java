@@ -23,7 +23,7 @@ class WybrenTest extends AdvancedRobot{
         }else {
             fire(1);
         }
-        scan();
+
     }
 
 
