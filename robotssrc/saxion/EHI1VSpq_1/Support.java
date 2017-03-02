@@ -74,12 +74,19 @@ public class Support extends TeamRobot {
 
             setTurnRadarRight(10000);
             this.setColors(c.bodyColor, c.gunColor, c.radarColor, c.bulletColor, c.scanColor);
+            try {
+                broadcastMessage(c);
+            } catch (IOException ignored) {
+            }
             ahead(1);
             back(1);
         }
     }
 
     public void onScannedRobot(ScannedRobotEvent event) {
+        if(isTeammate(event.getName())) {
+            return;
+        }
         Position position = new Position(this.getX(), this.getY());
         Position enemyPosition = prediction.getEnemyPosition(this.getHeading(), event.getBearing(), event.getDistance(), position);
 
