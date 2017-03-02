@@ -2,7 +2,7 @@ package saxion.EHI1VSpq_1;
 
 import robocode.ScannedRobotEvent;
 import robocode.TeamRobot;
-import sampleteam.RobotColors;
+import sampleteam.*;
 
 import java.awt.*;
 import java.io.IOException;
@@ -87,13 +87,26 @@ public class Support extends TeamRobot {
         if(isTeammate(event.getName())) {
             return;
         }
-        Position position = new Position(this.getX(), this.getY());
+        /*Position position = new Position(this.getX(), this.getY());
         Position enemyPosition = prediction.getEnemyPosition(this.getHeading(), event.getBearing(), event.getDistance(), position);
 
         try {
             broadcastMessage(enemyPosition);
         } catch (IOException e) {
             e.printStackTrace();
+        }*/
+
+        double enemyBearing = this.getHeading() + event.getBearing();
+        // Calculate enemy's position
+        double enemyX = getX() + event.getDistance() * Math.sin(Math.toRadians(enemyBearing));
+        double enemyY = getY() + event.getDistance() * Math.cos(Math.toRadians(enemyBearing));
+
+        try {
+            // Send enemy position to teammates
+            broadcastMessage(new Position(enemyX, enemyY));
+        } catch (IOException ex) {
+            out.println("Unable to send order: ");
+            ex.printStackTrace(out);
         }
     }
 }

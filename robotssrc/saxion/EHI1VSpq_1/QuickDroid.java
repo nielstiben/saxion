@@ -8,7 +8,7 @@ import static robocode.util.Utils.normalRelativeAngleDegrees;
 public class QuickDroid extends TeamRobot implements robocode.Droid {
 
     public void run() {
-        turnGunRight(100000);
+        out.println("MyFirstDroid ready.");
     }
 
     public void onMessageReceived(MessageEvent event) {
