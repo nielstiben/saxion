@@ -13,18 +13,11 @@ class Prediction {
      */
     Position getEnemyPosition(double ownHeading, double enemyBearing, double distanceToEnemy, Position ownPosition) {
         Position result = new Position();
-        double bearing = bearingFrom(enemyBearing, ownHeading);
-        double x = ownPosition.getX(), y = ownPosition.getY();
+        double eB = ownHeading - enemyBearing;
+        double enemyX = ownPosition.getX() + distanceToEnemy * Math.sin(Math.toRadians(eB));
+        double enemyY = ownPosition.getY() + distanceToEnemy * Math.cos(Math.toRadians(eB));
 
-        double distanceX = Math.cos(bearing) * distanceToEnemy;
-        double distanceY = Math.sin(bearing) * distanceToEnemy;
-
-        if (onRight(enemyBearing, ownHeading)) result.setX(x + distanceX);
-        else result.setX(x - distanceX);
-
-        if (isBelow(enemyBearing, ownHeading)) result.setY(y - distanceY);
-        else result.setY(y + distanceY);
-
+        result.setPosition(enemyX, enemyY);
         return result;
     }
 
