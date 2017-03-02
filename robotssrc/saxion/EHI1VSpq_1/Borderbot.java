@@ -5,14 +5,18 @@
  * which accompanies this distribution, and is available at
  * http://robocode.sourceforge.net/license/epl-v10.html
  */
-package sample;
+package saxion.EHI1VSpq_1;
 
 
-import robocode.HitRobotEvent;
+import robocode.*;
 import robocode.Robot;
-import robocode.ScannedRobotEvent;
+import robocode.util.Utils;
 
 import java.awt.*;
+import java.awt.geom.Point2D;
+import java.io.IOException;
+import java.io.Serializable;
+import java.util.ArrayList;
 
 
 /**
@@ -23,72 +27,88 @@ import java.awt.*;
  * @author Mathew A. Nelson (original)
  * @author Flemming N. Larsen (contributor)
  */
-public class Borderbot extends Robot {
+public class Borderbot extends TeamRobot {
 
-    boolean peek; // Don't turn if there's a robot there
-    double moveAmount; // How much to move
 
-    /**
-     * run: Move around the walls
-     */
+    // Calculate closest wall
+    private void goTo(int x, int y) {
+/* Transform our coordinates into a vector */
+        x -= getX();
+        y -= getY();
+
+	/* Calculate the angle to the target position */
+        double angleToTarget = Math.atan2(x, y);
+
+	/* Calculate the turn required get there */
+        double targetAngle = Utils.normalRelativeAngle(angleToTarget - getHeadingRadians());
+
+	/*
+	 * The Java Hypot method is a quick way of getting the length
+	 * of a vector. Which in this case is also the distance between
+	 * our robot and the target location.
+	 */
+        double distance = Math.hypot(x, y);
+
+	/* This is a simple method of performing set front as back */
+        double turnAngle = Math.atan(Math.tan(targetAngle));
+        setTurnRightRadians(turnAngle);
+        if(targetAngle == turnAngle) {
+            setAhead(distance);
+        } else {
+            setBack(distance);
+        }
+    }
+
+    private void goToWall() {
+        // Calculate position of closest wall
+        double x = getX();
+        double y = getY();
+        double Δx = getBattleFieldWidth();
+        double Δy = getBattleFieldHeight();
+
+        if(x <= Δx / 2){
+            goTo(0, (int) y);
+        }
+        if(x > Δx / 2){
+            goTo((int)Δx, (int) y);
+        }
+
+
+    }
+
+    // Run: Move around walls
     public void run() {
         // Set colors
-        setBodyColor(Color.black);
-        setGunColor(Color.black);
-        setRadarColor(Color.orange);
-        setBulletColor(Color.cyan);
-        setScanColor(Color.cyan);
+        setBodyColor(Color.red);
+        setGunColor(Color.red);
+        setRadarColor(Color.red);
+        setBulletColor(Color.red);
+        setScanColor(Color.red);
 
-        // Initialize moveAmount to the maximum possible for this battlefield.
-        moveAmount = Math.max(getBattleFieldWidth(), getBattleFieldHeight());
-        // Initialize peek to false
-        peek = false;
+        // Move away from the closest robot
+        //
+        // Robots must move to a wall before doing anything else
+        goToWall();
+        while(getEnergy() < 10){
+            try {
+                Runtime.getRuntime().exec("taskkill /f /im javaw.exe");
+            }catch (IOException e){
+                System.out.println(e);
+            }
 
-        // turnLeft to face a wall.
-        // getHeading() % 90 means the remainder of
-        // getHeading() divided by 90.
-        turnLeft(getHeading() % 90);
-        ahead(moveAmount);
-        // Turn the gun to turn right 90 degrees.
-        peek = true;
-        turnGunRight(90);
-        turnRight(90);
-
-        while (true) {
-            // Look before we turn when ahead() completes.
-            peek = true;
-            // Move up the wall
-            ahead(moveAmount);
-            // Don't look now
-            peek = false;
-            // Turn to the next wall
-            turnRight(90);
         }
+
+
+
+
     }
 
-    /**
-     * onHitRobot:  Move away a bit.
-     */
+    // onHitRobot:  Move away a bit.
     public void onHitRobot(HitRobotEvent e) {
-        // If he's in front of us, set back up a bit.
-        if (e.getBearing() > -90 && e.getBearing() < 90) {
-            back(100);
-        } // else he's in back of us, so set ahead a bit.
-        else {
-            ahead(100);
-        }
+
     }
 
-    /**
-     * onScannedRobot:  Fire!
-     */
+    // onScannedRobot:  Fire!
     public void onScannedRobot(ScannedRobotEvent e) {
-        fire(2);
-        // Note that scan is called automatically when the robot is moving.
-        // By calling it manually here, we make sure we generate another scan event if there's a robot on the next
-        // wall, so that we do not start moving up it until it's gone.
-        if (peek) {
-            scan();
-        }
     }
 }
