@@ -1,11 +1,20 @@
 package saxion.EHI1VSpq_1;
 
-class Position {
+import java.io.Serializable;
+
+class Position implements Serializable{
 
     private double internalX, internalY;
+    private boolean isEnemy;
 
     Position(double x, double y) {
         internalX = x; internalY = y;
+    }
+
+    public Position(double internalX, double internalY, boolean isEnemy) {
+        this.internalX = internalX;
+        this.internalY = internalY;
+        this.isEnemy = isEnemy;
     }
 
     Position() {
@@ -18,6 +27,10 @@ class Position {
 
     double getY() {
         return internalY;
+    }
+
+    public boolean isEnemy() {
+        return isEnemy;
     }
 
     void setX(double x) {

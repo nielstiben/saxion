@@ -11,6 +11,6 @@ enum Communication {
     ENEMY_HAS_BORDERSENTRY,
     NEED_ENERGY,
     TOOK_DAMAGE,
-    GOING_IN
+    GOING_IN,
 
 }
