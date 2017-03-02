@@ -8,9 +8,13 @@
 package saxion.EHI1VSpq_1;
 
 
-import robocode.HitByBulletEvent;
-import robocode.Robot;
-import robocode.ScannedRobotEvent;
+import robocode.*;
+import robocode.robotinterfaces.peer.IBasicRobotPeer;
+import robocode.robotinterfaces.peer.ITeamRobotPeer;
+import sampleteam.Point;
+
+import java.io.IOException;
+import java.io.Serializable;
 
 
 /**
@@ -20,34 +24,50 @@ import robocode.ScannedRobotEvent;
  *
  * @author Mathew A. Nelson (original)
  */
-public class MyFirstRobot extends Robot {
+/**
+ * This robot can avoid wall to a certain distance
+ */
+public class MyFirstRobot extends TeamRobot {
+    private int wallMargin = 60;
+    private byte moveDirection = 1;
+    IBasicRobotPeer peer;
 
-	/**
-	 * MyFirstRobot's run method - Seesaw
-	 */
-	public void run() {
+    public void run() {
+        while (true) {
+            setTurnRadarRight(10000);
+            ahead(100);
+            back(100);
+        }
+    }
 
-		while (true) {
-			ahead(100); // Move ahead 100
-			turnGunRight(360); // Spin gun around
-			back(100); // Move back 100
-			turnGunRight(360); // Spin gun around
-		}
-	}
+    public void broadcastMessage(Serializable message) throws IOException {
+        if(this.peer != null) {
+            ((ITeamRobotPeer) this.peer).broadcastMessage(message);
+        }
+    }
 
-	/**
-	 * Fire when we see a robot
-	 */
-	public void onScannedRobot(ScannedRobotEvent e) {
-		fire(1);
-	}
+    /**
+     * onScannedRobot:  What to do when you see another robot
+     */
+    public void onScannedRobot(ScannedRobotEvent e) {
+        // Don't fire on teammates
+        if (isTeammate(e.getName())) {
+            return;
+        }
+        // Calculate enemy bearing
+        double enemyBearing = this.getHeading() + e.getBearing();
+        // Calculate enemy's position
+        double enemyX = getX() + e.getDistance() * Math.sin(Math.toRadians(enemyBearing));
+        double enemyY = getY() + e.getDistance() * Math.cos(Math.toRadians(enemyBearing));
 
-	/**
-	 * We were hit!  Turn perpendicular to the bullet,
-	 * so our seesaw might avoid a future shot.
-	 */
-	public void onHitByBullet(HitByBulletEvent e) {
-		turnLeft(90 - e.getBearing());
-	}
-}												
+        try {
+            // Send enemy position to teammates
+            broadcastMessage(new Position(enemyX,enemyY));
+        } catch (IOException ex) {
+            out.println("Unable to send order: ");
+            ex.printStackTrace(out);
+        }
+    }
+}
+
 
