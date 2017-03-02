@@ -6,13 +6,11 @@ import sampleteam.*;
 
 import java.awt.*;
 import java.io.IOException;
+import java.util.HashMap;
 
-/**
- * Created by wybrenoppedijk on 02/03/2017.
- */
 public class Support extends TeamRobot {
-    Prediction prediction = new Prediction();
-    RobotColors c = new RobotColors();
+    private RobotColors c = new RobotColors();
+    private HashMap<String, Position> battlefield = new HashMap<>();
 
     public void run() {
         int counter = 0;
@@ -84,26 +82,19 @@ public class Support extends TeamRobot {
     }
 
     public void onScannedRobot(ScannedRobotEvent event) {
-        if(isTeammate(event.getName())) {
-            return;
-        }
-        /*Position position = new Position(this.getX(), this.getY());
-        Position enemyPosition = prediction.getEnemyPosition(this.getHeading(), event.getBearing(), event.getDistance(), position);
+
+        double enemyBearing = this.getHeading() + event.getBearing(), positionX = getX() + event.getDistance() * Math.sin(Math.toRadians(enemyBearing)), positionY = getY() + event.getDistance() * Math.cos(Math.toRadians(enemyBearing));
+
+        String name = event.getName();
+        Position position = new Position(positionX, positionY, !isTeammate(name));
+
+        if (battlefield.containsKey(event.getName()))
+            battlefield.replace(name, position);
+        else
+            battlefield.put(event.getName(), new Position(positionX, positionY, !isTeammate(event.getName())));
 
         try {
-            broadcastMessage(enemyPosition);
-        } catch (IOException e) {
-            e.printStackTrace();
-        }*/
-
-        double enemyBearing = this.getHeading() + event.getBearing();
-        // Calculate enemy's position
-        double enemyX = getX() + event.getDistance() * Math.sin(Math.toRadians(enemyBearing));
-        double enemyY = getY() + event.getDistance() * Math.cos(Math.toRadians(enemyBearing));
-
-        try {
-            // Send enemy position to teammates
-            broadcastMessage(new Position(enemyX, enemyY));
+            broadcastMessage(battlefield);
         } catch (IOException ex) {
             out.println("Unable to send order: ");
             ex.printStackTrace(out);
