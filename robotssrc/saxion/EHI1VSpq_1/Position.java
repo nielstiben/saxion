@@ -1,6 +1,8 @@
 package saxion.EHI1VSpq_1;
 
-class Position {
+import java.io.Serializable;
+
+class Position implements Serializable{
 
     private double internalX, internalY;
 
