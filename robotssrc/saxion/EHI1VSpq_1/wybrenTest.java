@@ -13,7 +13,7 @@ import static robocode.util.Utils.normalRelativeAngleDegrees;
 /**
  * Created by wybrenoppedijk on 16/02/2017.
  */
-public class WybrenTest extends AdvancedRobot{
+class WybrenTest extends AdvancedRobot{
     int turnDirection = 1;
     int dist = 10;
 
