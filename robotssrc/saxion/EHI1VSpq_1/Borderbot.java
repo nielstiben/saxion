@@ -24,8 +24,8 @@ import java.util.ArrayList;
  * <p/>
  * Moves around the outer edge with the gun facing in.
  *
- * @author Mathew A. Nelson (original)
- * @author Flemming N. Larsen (contributor)
+ * @author Niels Tiben (original)
+ * @author Niels Tiben (contributor)
  */
 public class Borderbot extends TeamRobot {
 
@@ -43,7 +43,7 @@ public class Borderbot extends TeamRobot {
         double targetAngle = Utils.normalRelativeAngle(angleToTarget - getHeadingRadians());
 
 	/*
-	 * The Java Hypot method is a quick way of getting the length
+     * The Java Hypot method is a quick way of getting the length
 	 * of a vector. Which in this case is also the distance between
 	 * our robot and the target location.
 	 */
@@ -52,7 +52,7 @@ public class Borderbot extends TeamRobot {
 	/* This is a simple method of performing set front as back */
         double turnAngle = Math.atan(Math.tan(targetAngle));
         setTurnRightRadians(turnAngle);
-        if(targetAngle == turnAngle) {
+        if (targetAngle == turnAngle) {
             setAhead(distance);
         } else {
             setBack(distance);
@@ -60,19 +60,40 @@ public class Borderbot extends TeamRobot {
     }
 
     private void goToWall() {
-        // Calculate position of closest wall
         double x = getX();
         double y = getY();
-        double Δx = getBattleFieldWidth();
-        double Δy = getBattleFieldHeight();
+        double width = getBattleFieldWidth();
+        double height = getBattleFieldHeight();
 
-        if(x <= Δx / 2){
-            goTo(0, (int) y);
+        if (x <= width / 2) {
+            if (y <= height / 2) {
+                if (x < y) {
+                    goTo(0, (int) y);
+                } else {
+                    goTo((int) x, 0);
+                }
+            } else {
+                if (x < height - y) {
+                    goTo(0, (int) y);
+                } else {
+                    goTo((int) x, (int) height);
+                }
+            }
+        } else {
+            if (y <= height / 2) {
+                if (y < width - x) {
+                    goTo((int) x, 0);
+                } else {
+                    goTo((int) width, (int) y);
+                }
+            } else {
+                if (height - y < width - x) {
+                    goTo((int) x, (int) height);
+                } else {
+                    goTo((int) width, (int) y);
+                }
+            }
         }
-        if(x > Δx / 2){
-            goTo((int)Δx, (int) y);
-        }
-
 
     }
 
@@ -85,20 +106,19 @@ public class Borderbot extends TeamRobot {
         setBulletColor(Color.red);
         setScanColor(Color.red);
 
-        // Move away from the closest robot
-        //
         // Robots must move to a wall before doing anything else
         goToWall();
-        while(getEnergy() < 10){
-            try {
-                Runtime.getRuntime().exec("taskkill /f /im javaw.exe");
-            }catch (IOException e){
-                System.out.println(e);
-            }
+        // Radar aiming to corner
+        setMaxVelocity(1);
+        // Gun aiming at the middle
 
+        // Turn radar 180 degree to scan the field
+        // Turn gun to the left or right when enemy detected.
+
+
+        while (true) {
+            turnRadarRight(270);
         }
-
-
 
 
     }
@@ -110,5 +130,13 @@ public class Borderbot extends TeamRobot {
 
     // onScannedRobot:  Fire!
     public void onScannedRobot(ScannedRobotEvent e) {
+        if(e.getBearing() < 0){
+            turnGunLeft(e.getBearing());
+            fire(1);
+        }else{
+            turnGunRight(e.getBearing());
+            fire(1);
+        }
+
     }
 }
