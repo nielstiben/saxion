@@ -6,19 +6,28 @@ class Position implements Serializable{
 
     private double internalX, internalY;
     private boolean isEnemy;
+    private Priority prior;
 
-    Position(double x, double y) {
+    Position(double x, double y, Priority priority) {
         internalX = x; internalY = y;
+        prior = priority;
     }
 
-    public Position(double internalX, double internalY, boolean isEnemy) {
-        this.internalX = internalX;
-        this.internalY = internalY;
+    Position(double x, double y, boolean isEnemy) {
+        internalX = x;
+        internalY = y;
         this.isEnemy = isEnemy;
     }
 
     Position() {
 
+    }
+
+    Position(double x, double y, boolean isEnemy, Priority priority) {
+        internalX = x;
+        internalY = y;
+        this.isEnemy = isEnemy;
+        prior = priority;
     }
 
     double getX() {
@@ -46,35 +55,11 @@ class Position implements Serializable{
         internalY = y;
     }
 
-    /**
-     * Get the angle (in degrees) to another position. Made to use with Robot.fire().
-     * @param otherPosition The position to calculate the angle to.
-     * @return  The angle (in degrees) to otherPosition.
-     */
-    double getAngleTo(Position otherPosition) {
-        double result, tX = otherPosition.getX(), tY = otherPosition.getY(), aP, dX, dY;
-        if(internalX > tX) {
-            dX = internalX - tX;
-            if(internalY > tY) {
-                aP = 180;
-                dY = internalY - tY;
-            } else {
-                aP = 270;
-                dY = internalY + tY;
-            }
-        } else {
-            dX = internalX + tX;
-            if(internalY > tY) {
-                aP = 90;
-                dY = internalY - tY;
-            } else {
-                aP = 0;
-                dY = internalY + tY;
-            }
-        }
-
-        result = Math.atan(dY / dX);
-        return result + aP;
+    public Priority getPriority() {
+        return prior;
     }
 
+    public void setPriority(Priority priority) {
+        this.prior = prior;
+    }
 }
