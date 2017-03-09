@@ -19,6 +19,11 @@ class Position implements Serializable{
         this.isEnemy = isEnemy;
     }
 
+    Position(double x, double y) {
+        internalX = x;
+        internalY = y;
+    }
+
     Position() {
 
     }
