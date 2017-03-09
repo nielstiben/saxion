@@ -6,27 +6,43 @@ import sampleteam.RobotColors;
 
 public class MocroBot extends TeamRobot implements robocode.Droid {
 
+    Position highestPrior = new Position();
+
     public void run() {
         out.println("MyFirstDroid ready.");
-
+        highestPrior.setPriority(Priority.LOWEST);
     }
 
     public void onMessageReceived(MessageEvent event) {
 
 
         if (event.getMessage() instanceof Position) {
-            double bulletPower = Math.min(3.0, getEnergy());
             Position position = (Position) event.getMessage();
+
+            Position firePosition = new Position();
+
+            if (highestPrior.getPriority().greaterThan(position.getPriority())) {
+                firePosition = highestPrior;
+            } else {
+                highestPrior = position;
+                firePosition = position;
+            }
+
+
+            double bulletPower = Math.min(3.0, getEnergy());
+
             double theta = Utils.normalAbsoluteAngle(Math.atan2(
-                    position.getX() - getX(), position.getY() - getY()));
+                    firePosition.getX() - getX(), firePosition.getY() - getY()));
             //goTo(position.getX(), position.getY());
-            setTurnGunRightRadians(Utils.normalRelativeAngle(theta - getGunHeadingRadians()));
-            fire(bulletPower);
+            turnGunRightRadians(Utils.normalRelativeAngle(theta - getGunHeadingRadians()));
+            fire(3);
         } else if (event.getMessage() instanceof RobotColors) {
             RobotColors colors = (RobotColors) event.getMessage();
             this.setColors(colors.bodyColor, colors.gunColor, colors.radarColor, colors.bulletColor, colors.scanColor);
             scan();
         }
+
+
     }
 
 //    @Override

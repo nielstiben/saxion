@@ -14,7 +14,7 @@ enum Priority {
     }
 
     boolean greaterThan(Priority p) {
-        return this.p > p.p;
+        return this.p >= p.p;
     }
 
     boolean smallerThan(Priority p) {
