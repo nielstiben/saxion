@@ -117,19 +117,14 @@ public class Support extends TeamRobot {
         double enemyY = getY() + event.getDistance() * Math.cos(absoluteBearing);
         double enemyHeading = event.getHeadingRadians();
         double enemyVelocity = event.getVelocity();
-
         double deltaTime = 0;
-        double battleFieldHeight = getBattleFieldHeight(),
-                battleFieldWidth = getBattleFieldWidth();
+        double battleFieldHeight = getBattleFieldHeight(), battleFieldWidth = getBattleFieldWidth();
         double predictedX = enemyX, predictedY = enemyY;
-        while ((++deltaTime) * (20.0 - 3.0 * bulletPower) <
-                Point2D.Double.distance(myX, myY, predictedX, predictedY)) {
+
+        while ((++deltaTime) * (20.0 - 3.0 * bulletPower) < Point2D.Double.distance(myX, myY, predictedX, predictedY)) {
             predictedX += Math.sin(enemyHeading) * enemyVelocity;
             predictedY += Math.cos(enemyHeading) * enemyVelocity;
-            if (predictedX < 18.0
-                    || predictedY < 18.0
-                    || predictedX > battleFieldWidth - 18.0
-                    || predictedY > battleFieldHeight - 18.0) {
+            if (predictedX < 18.0 || predictedY < 18.0 || predictedX > battleFieldWidth - 18.0 || predictedY > battleFieldHeight - 18.0) {
                 predictedX = Math.min(Math.max(18.0, predictedX),
                         battleFieldWidth - 18.0);
                 predictedY = Math.min(Math.max(18.0, predictedY),
@@ -137,11 +132,6 @@ public class Support extends TeamRobot {
                 break;
             }
         }
-        double theta = Utils.normalAbsoluteAngle(Math.atan2(
-                predictedX - getX(), predictedY - getY()));
-
-        setTurnRadarRightRadians(
-                Utils.normalRelativeAngle(absoluteBearing - getRadarHeadingRadians()));
         position.setPosition(predictedX, predictedY);
 
         String enemyName = event.getName().toLowerCase();

@@ -1,10 +1,11 @@
 package saxion.EHI1VSpq_1;
 
+import java.io.Serializable;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map;
 
-public class Battlefield {
+class Battlefield implements Serializable {
 
     private HashMap<String, Position> field = new HashMap<>();
 
