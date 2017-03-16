@@ -54,6 +54,7 @@ public class Borderbot extends TeamRobot {
         setTurnRightRadians(turnAngle);
         if (targetAngle == turnAngle) {
             setAhead(distance);
+
         } else {
             setBack(distance);
         }
@@ -65,32 +66,35 @@ public class Borderbot extends TeamRobot {
         double width = getBattleFieldWidth();
         double height = getBattleFieldHeight();
 
+        // Distance to stop for the wall to prevent collisions;
+        int margin = 30;
+
         if (x <= width / 2) {
             if (y <= height / 2) {
                 if (x < y) {
-                    goTo(0, (int) y);
+                    goTo(margin, (int) y);
                 } else {
-                    goTo((int) x, 0);
+                    goTo((int) x, margin);
                 }
             } else {
                 if (x < height - y) {
-                    goTo(0, (int) y);
+                    goTo(margin, (int) y);
                 } else {
-                    goTo((int) x, (int) height);
+                    goTo((int) x, (int) height - margin);
                 }
             }
         } else {
             if (y <= height / 2) {
                 if (y < width - x) {
-                    goTo((int) x, 0);
+                    goTo((int) x, margin);
                 } else {
-                    goTo((int) width, (int) y);
+                    goTo((int) width - margin, (int) y);
                 }
             } else {
                 if (height - y < width - x) {
-                    goTo((int) x, (int) height);
+                    goTo((int) x, (int) height - margin);
                 } else {
-                    goTo((int) width, (int) y);
+                    goTo((int) width - margin, (int) y);
                 }
             }
         }
@@ -99,44 +103,54 @@ public class Borderbot extends TeamRobot {
 
     // Run: Move around walls
     public void run() {
+
+
         // Set colors
-        setBodyColor(Color.red);
-        setGunColor(Color.red);
-        setRadarColor(Color.red);
-        setBulletColor(Color.red);
-        setScanColor(Color.red);
-
-        // Robots must move to a wall before doing anything else
+        setColors(Color.red, Color.red, Color.red, Color.red, Color.red);
         goToWall();
-        // Radar aiming to corner
-        setMaxVelocity(1);
-        // Gun aiming at the middle
 
-        // Turn radar 180 degree to scan the field
-        // Turn gun to the left or right when enemy detected.
+        do {
+            if (getRadarTurnRemaining() == 0.0) {
+                setTurnRadarRightRadians(Double.POSITIVE_INFINITY);
 
-
-        while (true) {
-            turnRadarRight(270);
-        }
+            }
+            execute();
+        } while (true);
 
 
-    }
+
+    // Robots must move to a wall before doing anything else
+    // Radar aiming to corner
+    // Gun aiming at the middle
+    // Turn radar 180 degree to scan the field
+    // Turn gun to the left or right when enemy detected.
+
+
+}
 
     // onHitRobot:  Move away a bit.
     public void onHitRobot(HitRobotEvent e) {
 
     }
 
-    // onScannedRobot:  Fire!
+
+
     public void onScannedRobot(ScannedRobotEvent e) {
-        if(e.getBearing() < 0){
-            turnGunLeft(e.getBearing());
-            fire(1);
-        }else{
-            turnGunRight(e.getBearing());
-            fire(1);
-        }
+        double angleToEnemy = getHeadingRadians() + e.getBearingRadians();
+        double radarTurn = Utils.normalRelativeAngle(angleToEnemy - getRadarHeadingRadians());
+        double extraTurn = Math.min(Math.atan(36.0 / e.getDistance()), Rules.RADAR_TURN_RATE_RADIANS);
+        radarTurn += (radarTurn < 0 ? -extraTurn : extraTurn);
+        setTurnRadarRightRadians(radarTurn);
 
     }
+    // onScannedRobot:  Fire!
+//    public void onScannedRobot(ScannedRobotEvent e) {
+//        if(e.getBearing() < 0){
+//            turnGunLeft(e.getBearing());
+//            fire(1);
+//        }else{
+//            turnGunRight(e.getBearing());
+//            fire(1);
+//        }
+
 }
