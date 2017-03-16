@@ -1,29 +1,82 @@
 package saxion.EHI1VSpq_1;
 
+import robocode.BulletHitEvent;
 import robocode.MessageEvent;
+import robocode.RobotDeathEvent;
 import robocode.TeamRobot;
 import robocode.util.Utils;
+
+import java.util.*;
 
 @SuppressWarnings("unused")
 public class MocroBot extends TeamRobot implements robocode.Droid {
     private Battlefield battlefield = new Battlefield();
+    Position pos;
+    private int fire = 0;
 
     @SuppressWarnings("InfiniteLoopStatement")
     public void run() {
         while (true) {
             ahead(1);
             back(1);
+            System.out.println("I have missed" + fire + " shots.");
             if (battlefield.hasEnemyRobot()) {
-                Position pos = battlefield.getHighestPriority();
+                pos = battlefield.getHighestPriority();
 
                 double theta = Utils.normalAbsoluteAngle(Math.atan2(
                         pos.getX() - getX(), pos.getY() - getY()));
                 turnGunRightRadians(Utils.normalRelativeAngle(theta - getGunHeadingRadians()));
-                fire(bulletPower(pos.getX(), pos.getY()));
+
+                for (Position p : friendlyRobots()) {
+                    double friendlyTheta = Utils.normalAbsoluteAngle(Math.atan2(
+                            p.getX() - getX(), p.getY() - getY()));
+                    out.println(theta);
+                    out.println((theta + ((2 * Math.PI) / 360) * 2.5)+" Na de berekening");
+                    if (friendlyTheta <= (theta + ((2 * Math.PI) / 360) * 3) && friendlyTheta >= (theta - ((2 * Math.PI) / 360) * 3)) {
+                        double distanceEnemy = Math.sqrt(Math.pow(getX() - pos.getX(), 2) + Math.pow(getY() - pos.getY(), 2));
+                        if (distanceEnemy < 0) {
+                            distanceEnemy = distanceEnemy * -1;
+                        }
+                        double distanceFriendly = Math.sqrt(Math.pow(getX() - p.getX(), 2) + Math.pow(getY() - p.getY(), 2));
+                        if (distanceFriendly < 0) {
+                            distanceFriendly = distanceFriendly * -1;
+                        }
+                        if (distanceEnemy > distanceFriendly) {
+                            out.println("Teammate in the way!");
+                        } else {
+                            fire++;
+                            fire(3);
+                        }
+                    }else {
+                        fire++;
+                        fire(3);
+                    }
+                }
             }
         }
 
     }
+
+    public void onBulletHit(BulletHitEvent event) {
+        fire--;
+    }
+
+    private Set<Position> friendlyRobots() {
+        Set<Position> result = new HashSet<>();
+        HashMap<String, Position> field = battlefield.getBattlefield();
+
+        Iterator iterator = field.entrySet().iterator();
+
+        while (iterator.hasNext()) {
+            Map.Entry pair = (Map.Entry) iterator.next();
+
+            if (((Position) pair.getValue()).getPriority() == Priority.TEAMMATE)
+                result.add((Position) pair.getValue());
+        }
+
+        return result;
+    }
+
 
     public void onMessageReceived(MessageEvent event) {
 
@@ -38,6 +91,10 @@ public class MocroBot extends TeamRobot implements robocode.Droid {
         }
     }
 
+    public void onRobotDeath(RobotDeathEvent event) {
+        battlefield.remove(event.getName());
+    }
+
     private double bulletPower(double xPos, double yPos) {
         double distance = Math.sqrt(Math.pow(getX() - xPos, 2) + Math.pow(getY() - yPos, 2));
 
@@ -45,7 +102,7 @@ public class MocroBot extends TeamRobot implements robocode.Droid {
             distance = distance * -1;
         }
 
-        if (distance < 100 && getEnergy() > 70) {
+        if (distance < 100 && getEnergy() > 30) {
             return 3;
         }
         if (distance < 300 && getEnergy() > 50) {

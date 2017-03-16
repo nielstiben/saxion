@@ -16,6 +16,10 @@ public class VladimirPutin extends TeamRobot {
     private int colorsCounter = 0;
     private Random rand = new Random();
 
+    double previousEnergy = 100;
+    int movementDirection = 1;
+    int gunDirection = 1;
+
     @SuppressWarnings("InfiniteLoopStatement")
     public void run() {
         while (true) {
@@ -27,13 +31,18 @@ public class VladimirPutin extends TeamRobot {
             }
 
             setTurnRadarRight(10000);
-            ahead(10);
-            back(10);
+            ahead(200);
+            back(200);
             scan();
         }
     }
 
     public void onScannedRobot(ScannedRobotEvent event) {
+
+
+
+
+
         String name = event.getName();
 
         double absoluteBearing = getHeadingRadians() + event.getBearingRadians();
@@ -44,16 +53,35 @@ public class VladimirPutin extends TeamRobot {
 
         if(isTeammate(name)) position.setPriority(Priority.TEAMMATE);
 
+        String compared = name.toLowerCase();
+        if(compared.contains("leader") || compared.contains("master") || compared.contains("communication") || compared.contains("support"))
+            position.setPriority(Priority.HIGHEST);
+
         if (battlefield.contains(name)) {
             if(battlefield.getPosition(name).getPriority() == null) position.setPriority(Priority.STANDARD);
             battlefield.update(name, position);
         } else battlefield.add(name, position);
 
+        battlefield.add(this.getName(), new Position(this.getX(), this.getY(), Priority.TEAMMATE));
         try {
             broadcastMessage(battlefield);
         } catch (IOException ignored) {
+        } finally {
+            // Stay at right angles to the opponent
+            setTurnRight(event.getBearing()+90-
+                    30*movementDirection);
+            // If the bot has small energy drop,
+            // assume it fired
+            double changeInEnergy =
+                    previousEnergy-event.getEnergy();
+            if (changeInEnergy>0 &&
+                    changeInEnergy<=3) {
+                // Dodge!
+                movementDirection =
+                        -movementDirection;
+                setAhead((event.getDistance()/4+25) * movementDirection);
         }
-    }
+    }}
 
     public void onRobotDeath(RobotDeathEvent event) {
         battlefield.remove(event.getName());

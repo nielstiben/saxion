@@ -14,12 +14,6 @@ class Position implements Serializable{
         prior = priority;
     }
 
-    Position(double x, double y, boolean isEnemy) {
-        internalX = x;
-        internalY = y;
-        this.isEnemy = isEnemy;
-    }
-
     Position(double x, double y) {
         internalX = x;
         internalY = y;
