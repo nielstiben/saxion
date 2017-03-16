@@ -1,6 +1,8 @@
 package saxion.EHI1VSpq_1;
 
 import java.util.HashMap;
+import java.util.Iterator;
+import java.util.Map;
 
 public class Battlefield {
 
@@ -73,11 +75,36 @@ public class Battlefield {
     }
 
     /**
+     * Get the highest priority position in the battlefield
+     * @return          The position with the highest priority
+     */
+    Position getHighestPriority() {
+        Iterator iterator = field.entrySet().iterator();
+        Position result = new Position();
+        result.setPriority(Priority.LOWEST);
+
+        while (iterator.hasNext()) {
+            Map.Entry pair = (Map.Entry) iterator.next();
+            if(((Position) pair.getValue()).getPriority().greaterThan(result.getPriority())) result = (Position) pair.getValue();
+        }
+
+        return result;
+    }
+
+    /**
      * Get the entire battlefield
      * @return          The entire field
      */
     HashMap getBattlefield() {
         return field;
+    }
+
+    /**
+     * Replace the entire battlefield (Be careful when using!)
+     * @param battlefield   The new battlefield
+     */
+    void setBattlefield(HashMap<String, Position> battlefield) {
+        this.field = battlefield;
     }
 
 }
