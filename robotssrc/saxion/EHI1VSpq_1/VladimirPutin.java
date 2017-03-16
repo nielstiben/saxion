@@ -1,6 +1,7 @@
 package saxion.EHI1VSpq_1;
 
 import robocode.HitByBulletEvent;
+import robocode.RobotDeathEvent;
 import robocode.ScannedRobotEvent;
 import robocode.TeamRobot;
 
@@ -26,8 +27,6 @@ public class VladimirPutin extends TeamRobot {
             }
 
             setTurnRadarRight(10000);
-            //setAhead(rand.nextInt(200));
-            //setBack(rand.nextInt(200));
             ahead(10);
             back(10);
             scan();
@@ -48,9 +47,16 @@ public class VladimirPutin extends TeamRobot {
         if (battlefield.contains(name)) {
             if(battlefield.getPosition(name).getPriority() == null) position.setPriority(Priority.STANDARD);
             battlefield.update(name, position);
-        }
-        else battlefield.add(name, position);
+        } else battlefield.add(name, position);
 
+        try {
+            broadcastMessage(battlefield);
+        } catch (IOException ignored) {
+        }
+    }
+
+    public void onRobotDeath(RobotDeathEvent event) {
+        battlefield.remove(event.getName());
         try {
             broadcastMessage(battlefield);
         } catch (IOException ignored) {
