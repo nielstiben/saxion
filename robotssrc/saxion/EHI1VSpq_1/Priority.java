@@ -2,6 +2,7 @@ package saxion.EHI1VSpq_1;
 
 enum Priority {
 
+    TEAMMATE(0),
     LOWEST(1),
     LOW(2),
     STANDARD(3),

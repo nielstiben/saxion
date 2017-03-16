@@ -2,11 +2,10 @@ package saxion.EHI1VSpq_1;
 
 import robocode.*;
 import robocode.util.Utils;
-import sampleteam.RobotColors;
 
 public class MocroBot extends TeamRobot implements robocode.Droid {
-
     Position highestPrior = new Position();
+    Position firePosition;
 
     public void run() {
         out.println("MyFirstDroid ready.");
@@ -15,37 +14,33 @@ public class MocroBot extends TeamRobot implements robocode.Droid {
 
     public void onMessageReceived(MessageEvent event) {
 
-
-        if (event.getMessage() instanceof Position) {
-            Position position = (Position) event.getMessage();
-
-            Position firePosition = new Position();
-
-            if (highestPrior.getPriority().greaterThan(position.getPriority())) {
-                firePosition = highestPrior;
-            } else {
+        if (event.getMessage() instanceof Battlefield) {
+            Position position = ((Battlefield) event.getMessage()).getHighestPriority();
+            if (((Battlefield) event.getMessage()).getHighestPriority().getPriority().greaterThan(highestPrior.getPriority())) {
                 highestPrior = position;
                 firePosition = position;
+            } else {
+                firePosition = highestPrior;
             }
-
-
-            double bulletPower = Math.min(3.0, getEnergy());
-
             double theta = Utils.normalAbsoluteAngle(Math.atan2(
                     firePosition.getX() - getX(), firePosition.getY() - getY()));
-            //goTo(position.getX(), position.getY());
             turnGunRightRadians(Utils.normalRelativeAngle(theta - getGunHeadingRadians()));
-            fire(3);
-        } else if (event.getMessage() instanceof RobotColors) {
+            fire(bulletPower(firePosition.getX(), firePosition.getY()));
+        } else if (event.getMessage() instanceof RobotColors)
+
+        {
             RobotColors colors = (RobotColors) event.getMessage();
             this.setColors(colors.bodyColor, colors.gunColor, colors.radarColor, colors.bulletColor, colors.scanColor);
             scan();
         }
-
-
     }
 
-//    @Override
+
+    public void onRobotDeath(RobotDeathEvent event) {
+        if (event.getName().equals(highestPrior.getName())) highestPrior.setPriority(Priority.LOWEST);
+    }
+
+    //    @Override
 //    public void onHitByBullet(HitByBulletEvent event) {
 //        double x = getX();
 //        double y = getY();
@@ -61,6 +56,27 @@ public class MocroBot extends TeamRobot implements robocode.Droid {
 //
 //
 //    }
+    public double bulletPower(double xPos, double yPos) {
+        double distance = Math.sqrt(Math.pow(getX() - xPos, 2) + Math.pow(getY() - yPos, 2));
+
+        if (distance < 0) {
+            distance = distance * -1;
+        }
+
+        if (distance < 100 && getEnergy() > 70) {
+            return 3;
+        }
+        if (distance < 300 && getEnergy() > 50) {
+            return 2;
+        }
+        if (distance > 300 && getEnergy() > 100) {
+            return 2;
+        }
+        if (distance > 300 && getEnergy() < 100) {
+            return 1;
+        }
+        return 1;
+    }
 
     private void goTo(double x, double y) {
 /* Transform our coordinates into a vector */

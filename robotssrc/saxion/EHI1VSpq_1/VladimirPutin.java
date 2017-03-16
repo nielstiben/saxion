@@ -26,8 +26,10 @@ public class VladimirPutin extends TeamRobot {
             }
 
             setTurnRadarRight(10000);
-            setAhead(rand.nextInt(200));
-            setBack(rand.nextInt(200));
+            //setAhead(rand.nextInt(200));
+            //setBack(rand.nextInt(200));
+            ahead(10);
+            back(10);
             scan();
         }
     }
@@ -41,7 +43,12 @@ public class VladimirPutin extends TeamRobot {
 
         Position position = new Position(enemyX, enemyY);
 
-        if (battlefield.contains(name)) battlefield.update(name, position);
+        if(isTeammate(name)) position.setPriority(Priority.TEAMMATE);
+
+        if (battlefield.contains(name)) {
+            if(battlefield.getPosition(name).getPriority() == null) position.setPriority(Priority.STANDARD);
+            battlefield.update(name, position);
+        }
         else battlefield.add(name, position);
 
         try {

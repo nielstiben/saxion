@@ -86,7 +86,8 @@ class Battlefield implements Serializable {
 
         while (iterator.hasNext()) {
             Map.Entry pair = (Map.Entry) iterator.next();
-            if(((Position) pair.getValue()).getPriority().greaterThan(result.getPriority())) result = (Position) pair.getValue();
+            if(((Position) pair.getValue()).getPriority().greaterThan(result.getPriority()))
+                result = (Position) pair.getValue();
         }
 
         return result;
