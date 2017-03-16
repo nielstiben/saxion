@@ -6,7 +6,7 @@ class Position implements Serializable{
 
     private double internalX, internalY;
     private boolean isEnemy;
-    private Priority prior;
+    private Priority prior = Priority.LOWEST;
     private String name;
 
     Position(double x, double y, Priority priority) {
@@ -40,20 +40,20 @@ class Position implements Serializable{
         return internalX;
     }
 
-    double getY() {
-        return internalY;
-    }
-
-    public boolean isEnemy() {
-        return isEnemy;
-    }
-
     void setX(double x) {
         internalX = x;
     }
 
+    double getY() {
+        return internalY;
+    }
+
     void setY(double y) {
         internalY = y;
+    }
+
+    public boolean isEnemy() {
+        return isEnemy;
     }
 
     void setPosition(double x, double y) {

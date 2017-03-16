@@ -1,31 +1,34 @@
 package saxion.EHI1VSpq_1;
 
-import robocode.*;
+import robocode.MessageEvent;
+import robocode.TeamRobot;
 import robocode.util.Utils;
 
+@SuppressWarnings("unused")
 public class MocroBot extends TeamRobot implements robocode.Droid {
-    Position highestPrior = new Position();
-    Position firePosition;
+    private Battlefield battlefield = new Battlefield();
 
+    @SuppressWarnings("InfiniteLoopStatement")
     public void run() {
-        out.println("MyFirstDroid ready.");
-        highestPrior.setPriority(Priority.LOWEST);
+        while (true) {
+            ahead(1);
+            back(1);
+            if (battlefield.hasEnemyRobot()) {
+                Position pos = battlefield.getHighestPriority();
+
+                double theta = Utils.normalAbsoluteAngle(Math.atan2(
+                        pos.getX() - getX(), pos.getY() - getY()));
+                turnGunRightRadians(Utils.normalRelativeAngle(theta - getGunHeadingRadians()));
+                fire(bulletPower(pos.getX(), pos.getY()));
+            }
+        }
+
     }
 
     public void onMessageReceived(MessageEvent event) {
 
         if (event.getMessage() instanceof Battlefield) {
-            Position position = ((Battlefield) event.getMessage()).getHighestPriority();
-            if (((Battlefield) event.getMessage()).getHighestPriority().getPriority().greaterThan(highestPrior.getPriority())) {
-                highestPrior = position;
-                firePosition = position;
-            } else {
-                firePosition = highestPrior;
-            }
-            double theta = Utils.normalAbsoluteAngle(Math.atan2(
-                    firePosition.getX() - getX(), firePosition.getY() - getY()));
-            turnGunRightRadians(Utils.normalRelativeAngle(theta - getGunHeadingRadians()));
-            fire(bulletPower(firePosition.getX(), firePosition.getY()));
+            battlefield = (Battlefield) event.getMessage();
         } else if (event.getMessage() instanceof RobotColors)
 
         {
@@ -35,28 +38,7 @@ public class MocroBot extends TeamRobot implements robocode.Droid {
         }
     }
 
-
-    public void onRobotDeath(RobotDeathEvent event) {
-        if (event.getName().equals(highestPrior.getName())) highestPrior.setPriority(Priority.LOWEST);
-    }
-
-    //    @Override
-//    public void onHitByBullet(HitByBulletEvent event) {
-//        double x = getX();
-//        double y = getY();
-//
-//        System.out.println("test");
-//
-//        if (x > 100 ) {
-//            if (y > 100 ) {
-//                goTo(x-100, y-100);
-//            }
-//        }
-//
-//
-//
-//    }
-    public double bulletPower(double xPos, double yPos) {
+    private double bulletPower(double xPos, double yPos) {
         double distance = Math.sqrt(Math.pow(getX() - xPos, 2) + Math.pow(getY() - yPos, 2));
 
         if (distance < 0) {
@@ -79,11 +61,12 @@ public class MocroBot extends TeamRobot implements robocode.Droid {
     }
 
     private void goTo(double x, double y) {
-/* Transform our coordinates into a vector */
+    /* Transform our coordinates into a vector */
         x -= getX();
         y -= getY();
 
 	/* Calculate the angle to the target position */
+        //noinspection SuspiciousNameCombination
         double angleToTarget = Math.atan2(x, y);
 
 	/* Calculate the turn required get there */
