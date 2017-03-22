@@ -16,9 +16,8 @@ public class VladimirPutin extends TeamRobot {
     private int colorsCounter = 0;
     private Random rand = new Random();
 
-    double previousEnergy = 100;
-    int movementDirection = 1;
-    int gunDirection = 1;
+    private int movementDirection = 1;
+    private int gunDirection = 1;
 
     @SuppressWarnings("InfiniteLoopStatement")
     public void run() {
@@ -38,11 +37,6 @@ public class VladimirPutin extends TeamRobot {
     }
 
     public void onScannedRobot(ScannedRobotEvent event) {
-
-
-
-
-
         String name = event.getName();
 
         double absoluteBearing = getHeadingRadians() + event.getBearingRadians();
@@ -51,37 +45,32 @@ public class VladimirPutin extends TeamRobot {
 
         Position position = new Position(enemyX, enemyY);
 
-        if(isTeammate(name)) position.setPriority(Priority.TEAMMATE);
+        if (isTeammate(name)) position.priority = Priority.TEAMMATE;
 
         String compared = name.toLowerCase();
-        if(compared.contains("leader") || compared.contains("master") || compared.contains("communication") || compared.contains("support"))
-            position.setPriority(Priority.HIGHEST);
+        if (compared.contains("leader") || compared.contains("master") || compared.contains("communication") || compared.contains("support"))
+            position.priority = Priority.HIGHEST;
 
         if (battlefield.contains(name)) {
-            if(battlefield.getPosition(name).getPriority() == null) position.setPriority(Priority.STANDARD);
+            if (battlefield.getPosition(name).priority == null) position.priority = Priority.STANDARD;
             battlefield.update(name, position);
         } else battlefield.add(name, position);
 
-        battlefield.add(this.getName(), new Position(this.getX(), this.getY(), Priority.TEAMMATE));
+        battlefield.add(getName(), new Position(getX(), getY(), Priority.TEAMMATE));
+
         try {
             broadcastMessage(battlefield);
         } catch (IOException ignored) {
         } finally {
-            // Stay at right angles to the opponent
-            setTurnRight(event.getBearing()+90-
-                    30*movementDirection);
-            // If the bot has small energy drop,
-            // assume it fired
-            double changeInEnergy =
-                    previousEnergy-event.getEnergy();
-            if (changeInEnergy>0 &&
-                    changeInEnergy<=3) {
-                // Dodge!
-                movementDirection =
-                        -movementDirection;
-                setAhead((event.getDistance()/4+25) * movementDirection);
+            setTurnRight(event.getBearing() + 90 - 30 * movementDirection);
+            double changeInEnergy = 100 - event.getEnergy();
+            if (changeInEnergy > 0 && changeInEnergy <= 3) {
+                movementDirection = -movementDirection;
+                setAhead((event.getDistance() / 4 + 25) * movementDirection);
+            }
         }
-    }}
+
+    }
 
     public void onRobotDeath(RobotDeathEvent event) {
         battlefield.remove(event.getName());
@@ -95,7 +84,7 @@ public class VladimirPutin extends TeamRobot {
         String name = event.getName();
         if (battlefield.contains(name)) {
             Position p = battlefield.getPosition(name);
-            p.setPriority(Priority.HIGH);
+            p.priority = Priority.HIGH;
             battlefield.update(name, p);
         }
 

@@ -91,7 +91,7 @@ public class Support extends TeamRobot {
 
         if (isTeammate(event.getName())) return;
         Position pos = battlefield.get(event.getName());
-        pos.setPriority(Priority.HIGH);
+        pos.priority = Priority.HIGH;
         try {
             broadcastMessage(pos);
         } catch (IOException ignored) {
@@ -136,7 +136,7 @@ public class Support extends TeamRobot {
 
         String enemyName = event.getName().toLowerCase();
         if (enemyName.contains("leader") || enemyName.contains("master") || enemyName.contains("support") || enemyName.contains("communication")) {
-            position.setPriority(Priority.HIGHEST);
+            position.priority = Priority.HIGHEST;
         }
 
         try {

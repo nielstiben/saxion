@@ -5,6 +5,9 @@ import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map;
 
+/**
+ * A class to make communication using the <i>entire</i> map of the battlefield possible, with locations of all robots; friendly and enemy.
+ */
 class Battlefield implements Serializable {
 
     private HashMap<String, Position> field = new HashMap<>();
@@ -59,13 +62,9 @@ class Battlefield implements Serializable {
      * @return Whether there is an enemy on the battlefield.
      */
     boolean hasEnemyRobot() {
-        Iterator iterator = field.entrySet().iterator();
-
-        while (iterator.hasNext()) {
-            Map.Entry pair = (Map.Entry) iterator.next();
-            if (((Position) pair.getValue()).getPriority() != Priority.TEAMMATE) return true;
+        for (Map.Entry pair : field.entrySet()) {
+            if (((Position) pair.getValue()).priority != Priority.TEAMMATE) return true;
         }
-
         return false;
     }
 
@@ -87,15 +86,11 @@ class Battlefield implements Serializable {
     Position getHighestPriority() {
         Iterator iterator = field.entrySet().iterator();
         Position result = new Position();
-        result.setPriority(Priority.LOWEST);
+        result.priority = Priority.LOWEST;
 
         while (iterator.hasNext()) {
             Map.Entry pair = (Map.Entry) iterator.next();
-            if (((Position) pair.getValue())
-                    .getPriority()
-                    .greaterThan(
-                            result
-                                    .getPriority()))
+            if (((Position) pair.getValue()).priority.greaterThan(result.priority))
                 result = (Position) pair.getValue();
         }
 
@@ -107,17 +102,8 @@ class Battlefield implements Serializable {
      *
      * @return The entire field
      */
-    HashMap getBattlefield() {
+    HashMap<String, Position> getBattlefield() {
         return field;
-    }
-
-    /**
-     * Replace the entire battlefield (Be careful when using!)
-     *
-     * @param battlefield The new battlefield
-     */
-    void setBattlefield(HashMap<String, Position> battlefield) {
-        this.field = battlefield;
     }
 
 }

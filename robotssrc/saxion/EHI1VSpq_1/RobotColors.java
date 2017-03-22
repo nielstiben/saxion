@@ -1,8 +1,13 @@
 package saxion.EHI1VSpq_1;
 
 import java.awt.*;
+import java.io.Serializable;
 
-public class RobotColors implements java.io.Serializable {
+/**
+ * Class to communicate colors between robots.
+ * Only used for the awesome disco part we have implemented as team.
+ */
+public class RobotColors implements Serializable {
     Color bodyColor;
     Color gunColor;
     Color radarColor;

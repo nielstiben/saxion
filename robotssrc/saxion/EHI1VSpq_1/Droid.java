@@ -36,8 +36,8 @@ public class Droid extends TeamRobot implements robocode.Droid {
 //            setTurnRight(myPosition.getAngleTo(position) + 90 - (10 * newDirection));
 
             //Calculate X and Y
-            double dx = position.getX() - this.getX();
-            double dy = position.getY() - this.getY();
+            double dx = position.x - this.getX();
+            double dy = position.y - this.getY();
 
             //Calculate angle
             double theta = Math.toDegrees(Math.atan2(dx, dy));
