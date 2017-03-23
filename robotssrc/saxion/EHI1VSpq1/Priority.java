@@ -1,4 +1,4 @@
-package saxion.EHI1VSpq_1;
+package saxion.EHI1VSpq1;
 
 /**
  * Enum to make prioritising enemies much easier. Priorities can be:

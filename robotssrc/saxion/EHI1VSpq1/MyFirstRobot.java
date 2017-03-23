@@ -5,7 +5,7 @@
  * which accompanies this distribution, and is available at
  * http://robocode.sourceforge.net/license/epl-v10.html
  */
-package saxion.EHI1VSpq_1;
+package saxion.EHI1VSpq1;
 
 
 import robocode.ScannedRobotEvent;

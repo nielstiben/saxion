@@ -1,4 +1,4 @@
-package saxion.EHI1VSpq_1;
+package saxion.EHI1VSpq1;
 
 import robocode.HitByBulletEvent;
 import robocode.ScannedRobotEvent;
