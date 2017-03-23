@@ -9,6 +9,11 @@ import java.awt.*;
 import java.io.IOException;
 import java.util.Random;
 
+/**
+ * Core of the team
+ *
+ * @author Erik & Wybren
+ */
 @SuppressWarnings("unused")
 public class VladimirPutin extends TeamRobot {
 
@@ -19,6 +24,9 @@ public class VladimirPutin extends TeamRobot {
     private int movementDirection = 1;
     private int gunDirection = 1;
 
+    /**
+     * Constantly try to change colors, turn the radar with a huge amount so that it never stops turning and go back and forth with 200 pixels
+     */
     @SuppressWarnings("InfiniteLoopStatement")
     public void run() {
         while (true) {
@@ -36,6 +44,13 @@ public class VladimirPutin extends TeamRobot {
         }
     }
 
+    /**
+     * When a robot is scanned: put their scanned position in the battlefield map.
+     * If the name contains "leader", set this enemy as {<code>Priority.HIGHEST</code>}.
+     * If there is a small energy drop in the enemy's energy, assume it fired and dodge the bullet.
+     *
+     * @param event robocode.ScannedRobotEvent
+     */
     public void onScannedRobot(ScannedRobotEvent event) {
         String name = event.getName();
 
@@ -72,6 +87,11 @@ public class VladimirPutin extends TeamRobot {
 
     }
 
+    /**
+     * When a robot dies, remove it from the battlefield.
+     *
+     * @param event robocode.RobotDeathEvent
+     */
     public void onRobotDeath(RobotDeathEvent event) {
         battlefield.remove(event.getName());
         try {
@@ -80,6 +100,10 @@ public class VladimirPutin extends TeamRobot {
         }
     }
 
+    /**
+     * When hit by a bullet, get the robot that is targeting this and set its priority to <code>Priority.HIGH</code>
+     * @param event robocode.HitByBulletEvent
+     */
     public void onHitByBullet(HitByBulletEvent event) {
         String name = event.getName();
         if (battlefield.contains(name)) {
@@ -94,6 +118,10 @@ public class VladimirPutin extends TeamRobot {
         }
     }
 
+    /**
+     * Assign random colors to every part of the robot.
+     * @return RobotColors instance with random coloring
+     */
     private RobotColors robotColors() {
         RobotColors c = new RobotColors();
         if (colorsCounter > 6) {

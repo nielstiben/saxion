@@ -6,7 +6,7 @@ import sampleteam.RobotColors;
 import static robocode.util.Utils.normalRelativeAngleDegrees;
 
 /**
- * Created by wybrenoppedijk on 16/02/2017.
+ * Unused.
  */
 public class Droid extends TeamRobot implements robocode.Droid {
     private int wallMargin = 60; //how close the robot is allowed to get to the walls:

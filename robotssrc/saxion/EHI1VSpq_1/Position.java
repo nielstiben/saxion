@@ -4,6 +4,8 @@ import java.io.Serializable;
 
 /**
  * A class to make sending positions easier for everyone; this should also take care of compatibility issues.
+ *
+ * @author Erik
  */
 class Position implements Serializable {
 

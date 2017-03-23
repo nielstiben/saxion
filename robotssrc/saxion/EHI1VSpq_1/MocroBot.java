@@ -8,10 +8,18 @@ import robocode.util.Utils;
 import java.util.HashMap;
 import java.util.Map;
 
+/**
+ * Primary attack robot.
+ *
+ * @author Erik & Wybren
+ */
 @SuppressWarnings("unused")
 public class MocroBot extends TeamRobot implements robocode.Droid {
     private Battlefield battlefield = new Battlefield();
 
+    /**
+     * Constantly get the highest priority target from the battlefield and fire at that position, given there is no ally in the way.
+     */
     @SuppressWarnings("InfiniteLoopStatement")
     public void run() {
         while (true) {
@@ -38,6 +46,13 @@ public class MocroBot extends TeamRobot implements robocode.Droid {
         }
     }
 
+    /**
+     * When a message is received, check what kind it is.
+     * If it is an instance of Battlefield, update the internal battlefield.
+     * If it is an instance of RobotColors, change the colors of the robot.
+     *
+     * @param event robocode.MessageEvent
+     */
     public void onMessageReceived(MessageEvent event) {
 
         if (event.getMessage() instanceof Battlefield) {
@@ -49,6 +64,11 @@ public class MocroBot extends TeamRobot implements robocode.Droid {
         }
     }
 
+    /**
+     * When a robot dies, remove it from the battlefield.
+     *
+     * @param event robocode.RobotDeathEvent
+     */
     public void onRobotDeath(RobotDeathEvent event) {
         battlefield.remove(event.getName());
     }
@@ -73,6 +93,13 @@ public class MocroBot extends TeamRobot implements robocode.Droid {
         return result;
     }
 
+    /**
+     * Helper method to calculate the bullet power to shoot with.
+     *
+     * @param xPos Target X
+     * @param yPos Target Y
+     * @return The power to fire with
+     */
     private double bulletPower(double xPos, double yPos) {
         Position ownPos = new Position(getX(), getY());
         double distance = ownPos.distanceTo(new Position(xPos, yPos));
