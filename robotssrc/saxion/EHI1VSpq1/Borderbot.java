@@ -5,23 +5,19 @@
  * which accompanies this distribution, and is available at
  * http://robocode.sourceforge.net/license/epl-v10.html
  */
-package saxion.EHI1VSpq_1;
+package saxion.EHI1VSpq1;
 
 
-import robocode.*;
-import robocode.Robot;
+import robocode.HitRobotEvent;
+import robocode.Rules;
+import robocode.ScannedRobotEvent;
+import robocode.TeamRobot;
 import robocode.util.Utils;
 
 import java.awt.*;
-import java.awt.geom.Point2D;
-import java.io.IOException;
-import java.io.Serializable;
-import java.util.ArrayList;
 
 
 /**
- * Walls - a sample robot by Mathew Nelson, and maintained by Flemming N. Larsen
- * <p/>
  * Moves around the outer edge with the gun facing in.
  *
  * @author Niels Tiben (original)

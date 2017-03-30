@@ -1,4 +1,4 @@
-package saxion.EHI1VSpq_1;
+package saxion.EHI1VSpq1;
 
 import robocode.HitByBulletEvent;
 import robocode.ScannedRobotEvent;
@@ -11,6 +11,9 @@ import java.awt.geom.Point2D;
 import java.io.IOException;
 import java.util.HashMap;
 
+/**
+ * Unused.
+ */
 public class Support extends TeamRobot {
     private RobotColors c = new RobotColors();
     private HashMap<String, Position> battlefield = new HashMap<>();

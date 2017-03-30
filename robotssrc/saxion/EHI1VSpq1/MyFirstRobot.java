@@ -5,32 +5,24 @@
  * which accompanies this distribution, and is available at
  * http://robocode.sourceforge.net/license/epl-v10.html
  */
-package saxion.EHI1VSpq_1;
+package saxion.EHI1VSpq1;
 
 
-import robocode.*;
+import robocode.ScannedRobotEvent;
+import robocode.TeamRobot;
 import robocode.robotinterfaces.peer.IBasicRobotPeer;
 import robocode.robotinterfaces.peer.ITeamRobotPeer;
-import sampleteam.Point;
 
 import java.io.IOException;
 import java.io.Serializable;
 
-
 /**
- * MyFirstRobot - a sample robot by Mathew Nelson.
- * <p/>
- * Moves in a seesaw motion, and spins the gun around at each end.
- *
- * @author Mathew A. Nelson (original)
- */
-/**
- * This robot can avoid wall to a certain distance
+ * Unused
  */
 public class MyFirstRobot extends TeamRobot {
+    IBasicRobotPeer peer;
     private int wallMargin = 60;
     private byte moveDirection = 1;
-    IBasicRobotPeer peer;
 
     public void run() {
         while (true) {

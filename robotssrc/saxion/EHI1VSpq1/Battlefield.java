@@ -1,4 +1,4 @@
-package saxion.EHI1VSpq_1;
+package saxion.EHI1VSpq1;
 
 import java.io.Serializable;
 import java.util.HashMap;
@@ -7,6 +7,8 @@ import java.util.Map;
 
 /**
  * A class to make communication using the <i>entire</i> map of the battlefield possible, with locations of all robots; friendly and enemy.
+ *
+ * @author Erik
  */
 class Battlefield implements Serializable {
 

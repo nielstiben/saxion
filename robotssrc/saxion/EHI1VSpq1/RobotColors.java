@@ -1,4 +1,4 @@
-package saxion.EHI1VSpq_1;
+package saxion.EHI1VSpq1;
 
 import java.awt.*;
 import java.io.Serializable;
