@@ -2,14 +2,6 @@ package saxion.EHI1VSpq1;
 
 /**
  * Enum to make prioritising enemies much easier. Priorities can be:
- * <ul>
- * <li>TEAMMATE: Only to be used for teammates.</li>
- * <li>LOWEST: This enemy will be targeted <i>last of all.</i></li>
- * <li>LOW: This enemy will be targeted after the other enemies, but not last of all.</li>
- * <li>STANDARD: Placeholder priority.</li>
- * <li>HIGH: Usually the enemy currently targeting the leader. Taken out before others.</li>
- * <li>HIGHEST: Enemy leader. Executed before anyone else.</li>
- * </ul>
  *
  * @author Erik
  */
