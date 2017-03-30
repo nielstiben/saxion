@@ -1,9 +1,7 @@
 package saxion.EHI1VSpq1;
 
 import java.io.Serializable;
-import java.util.HashMap;
-import java.util.Iterator;
-import java.util.Map;
+import java.util.*;
 
 /**
  * A class to make communication using the <i>entire</i> map of the battlefield possible, with locations of all robots; friendly and enemy.
@@ -12,10 +10,37 @@ import java.util.Map;
  */
 class Battlefield implements Serializable {
 
+    private static transient Battlefield battlefield;
+    private static transient Set<BattlefieldUpdateListener> listeners = new HashSet<>();
     private HashMap<String, Position> field = new HashMap<>();
 
+    /**
+     * Create a new Battlefield instance
+     *
+     * @deprecated Deprecated since 27/03/2017; use static method <code>Battlefield.getInstance()</code> instead.
+     */
+    @Deprecated
     Battlefield() {
 
+    }
+
+    /**
+     * Get the singleton instance of a battlefield
+     *
+     * @return The singleton instance of a battlefield
+     */
+    static Battlefield getInstance() {
+        if (battlefield == null) battlefield = new Battlefield();
+        return battlefield;
+    }
+
+    /**
+     * Add a listener to the battlefield so a class gets notified on update
+     *
+     * @param listener The listener class to add to the battlefield
+     */
+    static void addListener(BattlefieldUpdateListener listener) {
+        listeners.add(listener);
     }
 
     /**
@@ -26,6 +51,7 @@ class Battlefield implements Serializable {
      */
     void add(String name, Position position) {
         field.put(name, position);
+        notifyListeners();
     }
 
     /**
@@ -35,6 +61,7 @@ class Battlefield implements Serializable {
      */
     void remove(String name) {
         field.remove(name);
+        notifyListeners();
     }
 
     /**
@@ -46,6 +73,7 @@ class Battlefield implements Serializable {
     void update(String name, Position position) {
         field.remove(name);
         field.put(name, position);
+        notifyListeners();
     }
 
     /**
@@ -106,6 +134,12 @@ class Battlefield implements Serializable {
      */
     HashMap<String, Position> getBattlefield() {
         return field;
+    }
+
+    private void notifyListeners() {
+        for (BattlefieldUpdateListener l : listeners) {
+            l.onBattlefieldUpdate();
+        }
     }
 
 }
